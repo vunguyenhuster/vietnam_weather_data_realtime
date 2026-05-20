@@ -1,0 +1,41 @@
+name: Collect Vietnam Weather
+
+on:
+  schedule:
+    # Mỗi 5 phút (GitHub Actions tối thiểu 5 phút)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Cho phép chạy thủ công
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Để commit và push được
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Collect weather data
+        run: python data_collector.py --once
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add weather_realtime.csv
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update weather data [skip ci]"
+            git push
+          fi

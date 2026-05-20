@@ -1,0 +1,85 @@
+city,province,latitude,longitude
+Hà Nội,,21.0285,105.8542
+Hồ Chí Minh,,10.8231,106.6297
+Hải Phòng,,20.8449,106.6881
+Đà Nẵng,,16.0544,108.2022
+Cần Thơ,,10.0452,105.7469
+Huế,Thừa Thiên Huế,16.4637,107.5909
+Hạ Long,Quảng Ninh,20.9516,107.0856
+Cẩm Phả,Quảng Ninh,21.0067,107.2778
+Móng Cái,Quảng Ninh,21.5247,107.9662
+Uông Bí,Quảng Ninh,21.0350,106.7700
+Thái Nguyên,Thái Nguyên,21.5942,105.8482
+Sông Công,Thái Nguyên,21.4858,105.8147
+Việt Trì,Phú Thọ,21.3227,105.4019
+Bắc Ninh,Bắc Ninh,21.1861,106.0763
+Từ Sơn,Bắc Ninh,21.1125,105.9617
+Hải Dương,Hải Dương,20.9394,106.3309
+Chí Linh,Hải Dương,21.1308,106.3886
+Nam Định,Nam Định,20.4275,106.1684
+Thái Bình,Thái Bình,20.4463,106.3422
+Ninh Bình,Ninh Bình,20.2539,105.9750
+Tam Điệp,Ninh Bình,20.1541,105.9204
+Bắc Giang,Bắc Giang,21.2731,106.1946
+Lạng Sơn,Lạng Sơn,21.8460,106.7570
+Cao Bằng,Cao Bằng,22.6656,106.2579
+Tuyên Quang,Tuyên Quang,21.8236,105.2181
+Yên Bái,Yên Bái,21.7229,104.9113
+Điện Biên Phủ,Điện Biên,21.3925,103.0179
+Sơn La,Sơn La,21.3275,103.9143
+Hòa Bình,Hòa Bình,20.8173,105.3376
+Lào Cai,Lào Cai,22.4857,103.9707
+Hà Giang,Hà Giang,22.8233,104.9836
+Vĩnh Yên,Vĩnh Phúc,21.3089,105.6049
+Phúc Yên,Vĩnh Phúc,21.2453,105.7053
+Bắc Kạn,Bắc Kạn,22.1470,105.8348
+Lai Châu,Lai Châu,22.3863,103.4701
+Hưng Yên,Hưng Yên,20.6464,106.0512
+Phủ Lý,Hà Nam,20.5453,105.9122
+Thanh Hóa,Thanh Hóa,19.8077,105.7764
+Sầm Sơn,Thanh Hóa,19.7371,105.8999
+Vinh,Nghệ An,18.6796,105.6813
+Cửa Lò,Nghệ An,18.7885,105.7244
+Hà Tĩnh,Hà Tĩnh,18.3428,105.9057
+Đồng Hới,Quảng Bình,17.4823,106.5998
+Đông Hà,Quảng Trị,16.8302,107.1003
+Tam Kỳ,Quảng Nam,15.5664,108.4809
+Hội An,Quảng Nam,15.8801,108.3260
+Quảng Ngãi,Quảng Ngãi,15.1206,108.7922
+Quy Nhơn,Bình Định,13.7695,109.2268
+Tuy Hòa,Phú Yên,13.0915,109.2985
+Nha Trang,Khánh Hòa,12.2388,109.1967
+Cam Ranh,Khánh Hòa,11.9054,109.1764
+Phan Rang - Tháp Chàm,Ninh Thuận,11.5643,108.9886
+Phan Thiết,Bình Thuận,10.9334,108.1002
+Đà Lạt,Lâm Đồng,11.9465,108.4419
+Bảo Lộc,Lâm Đồng,11.5484,107.8077
+Buôn Ma Thuột,Đắk Lắk,12.6662,108.0377
+Pleiku,Gia Lai,13.9833,108.0000
+Kon Tum,Kon Tum,14.3545,108.0076
+Gia Nghĩa,Đắk Nông,12.0042,107.6907
+Vũng Tàu,Bà Rịa - Vũng Tàu,10.3460,107.0843
+Bà Rịa,Bà Rịa - Vũng Tàu,10.5089,107.1816
+Biên Hòa,Đồng Nai,10.9574,106.8426
+Long Khánh,Đồng Nai,10.9402,107.2400
+Tây Ninh,Tây Ninh,11.3133,106.0984
+Thủ Dầu Một,Bình Dương,10.9804,106.6519
+Dĩ An,Bình Dương,10.9070,106.7694
+Thuận An,Bình Dương,10.9337,106.7144
+Đồng Xoài,Bình Phước,11.5348,106.8832
+Long Xuyên,An Giang,10.3686,105.4234
+Châu Đốc,An Giang,10.7054,105.1199
+Cao Lãnh,Đồng Tháp,10.4602,105.6330
+Sa Đéc,Đồng Tháp,10.2976,105.7649
+Mỹ Tho,Tiền Giang,10.3540,106.3640
+Bến Tre,Bến Tre,10.2414,106.3760
+Trà Vinh,Trà Vinh,9.9347,106.3455
+Vĩnh Long,Vĩnh Long,10.2537,105.9723
+Sóc Trăng,Sóc Trăng,9.6037,105.9800
+Bạc Liêu,Bạc Liêu,9.2857,105.7244
+Cà Mau,Cà Mau,9.1768,105.1524
+Rạch Giá,Kiên Giang,10.0124,105.0809
+Hà Tiên,Kiên Giang,10.3831,104.4878
+Phú Quốc,Kiên Giang,10.2896,103.9840
+Tân An,Long An,10.5333,106.4167
+Vị Thanh,Hậu Giang,9.7833,105.4667
