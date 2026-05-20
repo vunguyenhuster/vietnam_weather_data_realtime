@@ -11,7 +11,9 @@ import os
 import sys
 import time
 import requests
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+VN_TZ = timezone(timedelta(hours=7))
 
 # ========== CONFIG ==========
 COORDS_FILE = "cities_coords.csv"
@@ -68,7 +70,7 @@ def ensure_header(weather_file):
 
 
 def collect_once(cities, weather_file):
-    now_utc = datetime.now(timezone.utc).isoformat()
+    now_vn = datetime.now(VN_TZ).strftime("%Y-%m-%d %H:%M:%S")
     rows_written = 0
     for city in cities:
         current = fetch_weather(city["lat"], city["lon"])
@@ -76,7 +78,7 @@ def collect_once(cities, weather_file):
             with open(weather_file, 'a', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 writer.writerow([
-                    now_utc, city["province"], city["city"],
+                    now_vn, city["province"], city["city"],
                     current.get("temperature_2m"),
                     current.get("relative_humidity_2m"),
                     current.get("apparent_temperature"),
