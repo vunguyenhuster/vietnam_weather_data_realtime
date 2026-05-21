@@ -4,6 +4,7 @@ Fetch hourly historical weather data from Open-Meteo Archive API.
 Usage:
   python fetch_historical.py --start 2025-01-01 --end 2026-05-20
   python fetch_historical.py --start 2025-01-01 --end 2026-05-20 --resume
+  python fetch_historical.py --end 2026-05-25 --append
 """
 
 import argparse
@@ -12,6 +13,7 @@ import os
 import sys
 import time
 import requests
+from datetime import datetime, timedelta
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -69,6 +71,20 @@ def completed_cities(filepath):
     return done
 
 
+def get_latest_dates(filepath):
+    """Return dict of city -> latest date string (YYYY-MM-DD) from existing CSV."""
+    if not os.path.exists(filepath):
+        return {}
+    latest = {}
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for row in csv.DictReader(f):
+            city = row["city"]
+            t = row["time"][:10]  # YYYY-MM-DD
+            if t > latest.get(city, ""):
+                latest[city] = t
+    return latest
+
+
 def fetch_hourly(lat, lon, start_date, end_date):
     params = {
         "latitude": lat,
@@ -78,11 +94,11 @@ def fetch_hourly(lat, lon, start_date, end_date):
         "hourly": HOURLY_VARIABLES,
         "timezone": "Asia/Ho_Chi_Minh"
     }
-    for attempt in range(5):
+    for attempt in range(3):
         try:
             resp = requests.get("https://archive-api.open-meteo.com/v1/archive", params=params, timeout=60)
             if resp.status_code == 429:
-                wait = (attempt + 1) * 15
+                wait = (attempt + 1) * 30
                 print(f"(429, wait {wait}s)", end=" ", flush=True)
                 time.sleep(wait)
                 continue
@@ -94,14 +110,14 @@ def fetch_hourly(lat, lon, start_date, end_date):
                 return []
             rows = []
             for i, t in enumerate(times):
-                row = {"time": t}
+                row = {"time": t.replace("T", " ") + ":00"}
                 for var in HOURLY_VARIABLES:
                     values = hourly.get(var, [])
                     row[var] = values[i] if i < len(values) else None
                 rows.append(row)
             return rows
         except Exception as e:
-            if attempt < 4:
+            if attempt < 2:
                 time.sleep(5)
                 continue
             print(f"(ERROR: {e})", end=" ", flush=True)
@@ -111,34 +127,59 @@ def fetch_hourly(lat, lon, start_date, end_date):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--start", required=True)
-    parser.add_argument("--end", required=True)
-    parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--start", default=None, help="Start date YYYY-MM-DD")
+    parser.add_argument("--end", required=True, help="End date YYYY-MM-DD")
+    parser.add_argument("--resume", action="store_true", help="Resume after interruption")
+    parser.add_argument("--append", action="store_true", help="Append only new data per city")
     args = parser.parse_args()
 
-    cities = load_cities(COORDS_FILE)
-    done = completed_cities(OUTPUT_FILE) if args.resume else set()
+    if args.append and not args.start:
+        args.start = "2025-01-01"  # fallback for cities with no data yet
 
-    if args.resume:
-        cities = [c for c in cities if c["city"] not in done]
+    cities = load_cities(COORDS_FILE)
+
+    # --- Resolve per-city start dates (append mode) ---
+    city_dates = {}  # city -> start_date
+    if args.append:
+        latest = get_latest_dates(OUTPUT_FILE)
+        for c in cities:
+            name = c["city"]
+            if name in latest:
+                # Start from the day after the latest data
+                next_day = datetime.strptime(latest[name], "%Y-%m-%d") + timedelta(days=1)
+                city_dates[name] = next_day.strftime("%Y-%m-%d")
+            else:
+                city_dates[name] = args.start  # no data yet, use fallback
+        skipped = sum(1 for c in cities if city_dates[c["city"]] > args.end)
+        if skipped:
+            print(f"Skipping {skipped} cities already up-to-date through {args.end}")
+        cities = [c for c in cities if city_dates[c["city"]] <= args.end]
         if not cities:
-            print("All cities already fetched.")
+            print("All cities already up-to-date.")
             return
-        print(f"Resuming: {len(cities)} cities remaining")
+    else:
+        done = completed_cities(OUTPUT_FILE) if args.resume else set()
+        if args.resume:
+            cities = [c for c in cities if c["city"] not in done]
+            if not cities:
+                print("All cities already fetched.")
+                return
+            print(f"Resuming: {len(cities)} cities remaining")
 
     # Build header
     header = ["time", "province", "city"] + HOURLY_VARIABLES
 
-    mode = 'a' if args.resume else 'w'
+    mode = 'a' if (args.resume or args.append) else 'w'
     with open(OUTPUT_FILE, mode, newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         if mode == 'w':
             writer.writerow(header)
 
         for i, city in enumerate(cities):
-            label = f"[{i+1}/{len(cities)}] {city['city']}"
+            start = city_dates.get(city["city"], args.start)
+            label = f"[{i+1}/{len(cities)}] {city['city']} ({start}..)"
             print(f"{label}...", end=" ", flush=True)
-            rows = fetch_hourly(city["lat"], city["lon"], args.start, args.end)
+            rows = fetch_hourly(city["lat"], city["lon"], start, args.end)
             for r in rows:
                 row_data = [r["time"], city["province"], city["city"]]
                 for var in HOURLY_VARIABLES:
@@ -147,10 +188,14 @@ def main():
             f.flush()
             print(f"{len(rows)} hours")
             if len(rows) == 0:
-                print("  (cooling down 30s before next city)")
-                time.sleep(30)
+                print("  (cooling down 60s before next city)")
+                time.sleep(60)
             else:
-                time.sleep(2.0)
+                time.sleep(5.0)
+            # Batch pause every 10 cities to avoid rate limiting
+            if (i + 1) % 10 == 0 and i + 1 < len(cities):
+                print(f"  --- batch pause 120s ({i+1}/{len(cities)} done) ---")
+                time.sleep(120)
 
     total = sum(1 for _ in open(OUTPUT_FILE, encoding='utf-8')) - 1
     print(f"\nDone! {total} rows -> {OUTPUT_FILE}")

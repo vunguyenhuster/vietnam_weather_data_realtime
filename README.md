@@ -4,16 +4,9 @@ Thu thập dữ liệu thời tiết **84 thành phố Việt Nam** từ [Open-M
 
 ## Dữ liệu
 
-| File | Mô tả | Độ phân giải | Thời gian |
-|---|---|---|---|
-| `weather_realtime.csv` | Điều kiện thời tiết hiện tại (realtime) | Mỗi 2.5 phút | Thời gian thực |
-| `weather_hourly.csv` | Dữ liệu lịch sử hàng giờ | Hàng giờ (hourly) | 1/1/2025 → 19/5/2026 |
+`weather_hourly.csv` — dữ liệu thời tiết hàng giờ cho 84 thành phố, từ 1/1/2025 đến 19/5/2026. Định dạng thời gian: `YYYY-MM-DD HH:MM:SS`.
 
-### weather_realtime.csv — 13 cột
-
-`time`, `province`, `city`, `temperature`, `humidity`, `feels_like`, `precipitation`, `weather_code`, `cloudcover`, `pressure`, `wind_speed`, `wind_direction`, `wind_gust`, `is_day`
-
-### weather_hourly.csv — 37 cột (3 key + 34 biến thời tiết)
+### 37 cột (3 key + 34 biến thời tiết)
 
 **Nhiệt độ & độ ẩm:** `temperature_2m`, `relative_humidity_2m`, `apparent_temperature`, `dew_point_2m`, `vapour_pressure_deficit`, `wet_bulb_temperature_2m`
 
@@ -43,35 +36,41 @@ pip install -r requirements.txt
 
 Yêu cầu: Python 3.8+ và `requests>=2.28`.
 
-## Sử dụng
-
-### Thu thập dữ liệu realtime
+## Quick Start
 
 ```bash
-# Chạy liên tục, mỗi 2.5 phút thu thập 1 lần
-python data_collector.py
+# Lần đầu — tải toàn bộ dữ liệu
+python fetch_historical.py --start 2025-01-01 --end 2026-05-20
 
-# Chạy 1 lần duy nhất
-python data_collector.py --once
+# Hàng ngày — thêm dữ liệu mới
+python fetch_historical.py --end 2026-05-21 --append
 ```
 
-Dữ liệu được ghi vào `weather_realtime.csv` ở chế độ append.
+## Sử dụng
 
 ### Tải dữ liệu lịch sử hàng giờ
 
 ```bash
-# Tải toàn bộ dữ liệu lịch sử
+# Tải toàn bộ dữ liệu lịch sử (lần đầu)
 python fetch_historical.py --start 2025-01-01 --end 2026-05-19
 
 # Resume nếu bị gián đoạn (bỏ qua thành phố đã tải)
 python fetch_historical.py --start 2025-01-01 --end 2026-05-19 --resume
+
+# Thêm dữ liệu ngày mới (tự động chỉ lấy phần chưa có)
+python fetch_historical.py --end 2026-05-25 --append
 ```
 
-Dữ liệu được ghi vào `weather_hourly.csv`.
+| Chế độ | Cách dùng | Mô tả |
+|---|---|---|
+| Lần đầu | `--start DATE --end DATE` | Ghi đè file, fetch toàn bộ từ đầu |
+| Resume | `--start DATE --end DATE --resume` | Bỏ qua thành phố đã có, tiếp tục thành phố còn thiếu |
+| **Append** | `--end DATE --append` | Tự tìm ngày mới nhất của từng thành phố, chỉ fetch từ sau ngày đó. Không đụng data cũ |
+
+Dữ liệu được ghi vào `weather_hourly.csv`. Định dạng thời gian: `YYYY-MM-DD HH:MM:SS`.
 
 ## Nguồn dữ liệu
 
-- [Open-Meteo Forecast API](https://open-meteo.com/en/docs) — dữ liệu realtime
 - [Open-Meteo Historical API](https://open-meteo.com/en/docs/historical-weather-api) — dữ liệu lịch sử (ERA5)
 - Múi giờ: `Asia/Ho_Chi_Minh` (UTC+7)
 
