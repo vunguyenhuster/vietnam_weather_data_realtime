@@ -4,7 +4,7 @@ Thu thập dữ liệu thời tiết **84 thành phố Việt Nam** từ [Open-M
 
 ## Dữ liệu
 
-`weather_hourly.csv` — dữ liệu thời tiết hàng giờ cho 84 thành phố, từ 1/1/2025 đến 19/5/2026. Định dạng thời gian: `YYYY-MM-DD HH:MM:SS`.
+`weather_hourly.csv` — dữ liệu thời tiết hàng giờ cho 84 thành phố, từ 1/1/2025 đến 20/5/2026. Định dạng thời gian: `YYYY-MM-DD HH:MM:SS`.
 
 ### 37 cột (3 key + 34 biến thời tiết)
 
